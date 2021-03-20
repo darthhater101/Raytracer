@@ -23,8 +23,7 @@ uvec4 RANDOM;
 #define MAX_DEPTH 8
 #define SPHERE_COUNT 1
 #define BOX_COUNT 8
-#define N_IN 0.99
-#define N_OUT 1.0
+#define NORMAL_N 1.0
 
 struct Material
 {
@@ -32,10 +31,11 @@ struct Material
     vec3 reflectance;
     float roughness;
     float opacity;
+    float refraction;
 };
 
-Material glass = Material(vec3(0.0), vec3(1.0), 1.0, 0.8);
-Material copper = Material(vec3(0.0), vec3(0.6, 0.3, 0.15), 1.0 / 80.0, 0.0);
+Material glass = Material(vec3(0.0), vec3(1.0), 1.0, 0.8, 1.5);
+Material copper = Material(vec3(0.0), vec3(0.6, 0.3, 0.15), (1.0 / 80.0), 0.0, 1.0);
 
 struct Box
 {
@@ -231,10 +231,10 @@ vec3 TracePath(vec3 rayOrigin, vec3 rayDirection)
             newRayDirection = normalize(newRayDirection * dot(newRayDirection, normal));
             
             float refractRand = random();
-            bool refracted = IsRefracted(refractRand, rayDirection, normal, material.opacity, N_IN, N_OUT);
+            bool refracted = IsRefracted(refractRand, rayDirection, normal, material.opacity, material.refraction, NORMAL_N);
             if (refracted)
             {
-                vec3 idealRefraction = IdealRefract(rayDirection, normal, N_IN, N_OUT);
+                vec3 idealRefraction = IdealRefract(rayDirection, normal, material.refraction, NORMAL_N);
                 newRayDirection = normalize(mix(-newRayDirection, idealRefraction, material.roughness));
                 newRayOrigin += normal * (dot(newRayDirection, normal) < 0.0 ? -0.8 : 0.8);
             }

@@ -1,18 +1,18 @@
 #include "Shader.h"
 
-Shader::Shader(std::string vertexPath, std::string fragmentPath) : m_VertexPath(vertexPath), m_FragmentPath(fragmentPath)
+Shader::Shader(std::string vertexPath, std::string fragmentPath) : vertexPath(vertexPath), fragmentPath(fragmentPath)
 {
-	m_ShaderID = createProgram();
+	shaderID = createProgram();
 }
 
 Shader::~Shader()
 {
-	glDeleteProgram(m_ShaderID);
+	glDeleteProgram(shaderID);
 }
 
 void Shader::use()
 {
-	glUseProgram(m_ShaderID);
+	glUseProgram(shaderID);
 }
 
 void Shader::stopUse()
@@ -27,8 +27,8 @@ unsigned int Shader::createProgram()
 	unsigned int vertex = glCreateShader(GL_VERTEX_SHADER);
 	unsigned int fragment = glCreateShader(GL_FRAGMENT_SHADER);
 
-	std::string vert_path = read_file(m_VertexPath);
-	std::string frag_path = read_file(m_FragmentPath);
+	std::string vert_path = read_file(vertexPath);
+	std::string frag_path = read_file(fragmentPath);
 
 	const char* vertex_path = vert_path.c_str();
 	const char* fragment_path = frag_path.c_str();
